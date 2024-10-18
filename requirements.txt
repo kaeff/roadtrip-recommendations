@@ -1,3 +1,5 @@
 openai
 langchain
 streamlit
+pytest-mock
+pytest

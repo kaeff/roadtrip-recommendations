@@ -14,7 +14,7 @@ os.environ['OPENAI_API_KEY'] = openapi_key
 
 llm = OpenAI(model_name="gpt-3.5-turbo-instruct", temperature=0.6)
 
-Stop = namedtuple('Stop', ['place'])
+Stop = namedtuple('Stop', ['place', 'description'])
 
 def generate_roadtrip_stations(destination: str, traveller_info: str) -> list[Stop]:
     prompt_template = PromptTemplate(
@@ -44,7 +44,14 @@ def generate_roadtrip_stations(destination: str, traveller_info: str) -> list[St
 
     print(json.dumps(response, indent=4))
 
-    stops_csv = [s.split(";") for s in response['trip_stations'].split('\n')]
-    stops_csv = [line[0:1] for line in stops_csv if len(line) > 0 and len(line[0]) > 0]
+    stops_objects = transform_response(response)
 
-    return [Stop._make(line) for line in stops_csv]
+    return stops_objects
+
+
+def transform_response(response):
+    stops_csv = [s.split(";") for s in response['trip_stations'].split('\n')]
+    stops_csv = [line[0:2] for line in stops_csv if len(line) > 0 and len(line[0]) > 0]
+    stops_csv = [[cell.strip() for cell in line] for line in stops_csv]
+    stops_objects = [Stop._make(line) for line in stops_csv]
+    return stops_objects
