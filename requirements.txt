@@ -1,5 +1,7 @@
 openai
-langchain
-streamlit
-pytest-mock
-pytest
+langchain~=0.3.3
+streamlit~=1.39.0
+numpy~=1.26.4
+pandas~=2.2.3
+langchain-core~=0.3.12
+langchain-openai~=0.2.2
