@@ -9,9 +9,16 @@ from secret_key import openapi_key
 os.environ['OPENAI_API_KEY'] = openapi_key
 
 
+class GeoCoordinates(BaseModel):
+    latitude: float = Field()
+    longitude: float = Field()
+
 class Stop(BaseModel):
-    place: str = Field(description="Name of a city, town etc to stop during a roadtrip")
+    """A stop during a roadtrip"""
+
+    place: str = Field(description="Name of a city, town etc")
     description: str = Field(description="Short rationale of main activites or interests during this stop")
+    coordinates: GeoCoordinates = Field(description="Geo coordinates (latitude, longitude) of the place")
 
 class Itinerary(BaseModel):
     stops: list[Stop] = Field()
