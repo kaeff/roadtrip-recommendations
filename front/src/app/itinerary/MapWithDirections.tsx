@@ -1,59 +1,51 @@
-// MapWithDirections.js
+import { useEffect } from 'react';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 
-import React, { useEffect, useState } from 'react';
-import { GoogleMap, Marker, DirectionsRenderer, LoadScript } from '@react-google-maps/api';
-
-const mapContainerStyle = {
-  height: "400px",
-  width: "100%"
-};
-
-export default const MapWithDirections = ({ stops }) => {
-  const [directions, setDirections] = useState(null);
-  const defaultCenter = stops.length > 0 ? { lat: stops[0].lat, lng: stops[0].lng } : { lat: 37.7749, lng: -122.4194 }; // Default center
-
+const MapWithDirections = ({ stops }) => {
   useEffect(() => {
-    if (stops.length > 0) {
-      calculateRoute();
+    if (stops.length === 0) return;
+
+    // Initialize the map
+    const map = L.map('map')
+    //.setView(stopToLatLngArray(stops[0]), 7);
+
+    // Add OpenStreetMap tiles
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors',
+    }).addTo(map);
+
+    const markers = stops.map((stop) => {
+      L.marker(stopToLatLngArray(stop)).addTo(map).bindPopup(stop.place);
+    });
+
+    // Draw route between the stops (if there are at least 2 stops)
+    if (stops.length > 1) {
+      const routeCoordinates = stops.map(stopToLatLngArray);
+
+      // // Create a polyline connecting the stops
+      // L.polyline(routeCoordinates, { color: 'blue' }).addTo(map);
+
+      // Fit map bounds to show all stops
+      const bounds = L.latLngBounds(routeCoordinates);
+      map.fitBounds(bounds);
     }
+
+    // Cleanup function to remove the map instance when the component is unmounted
+    return () => {
+      map.remove();
+    };
   }, [stops]);
 
-  const calculateRoute = async () => {
-    const directionsService = new window.google.maps.DirectionsService();
-
-    const waypoints = stops.map(stop => ({
-      location: { lat: stop.lat, lng: stop.lng },
-      stopover: true
-    }));
-
-    const request = {
-      origin: waypoints[0].location,
-      destination: waypoints[waypoints.length - 1].location,
-      waypoints: waypoints.slice(1, -1),
-      travelMode: window.google.maps.TravelMode.DRIVING
-    };
-
-    directionsService.route(request, (result, status) => {
-      if (status === window.google.maps.DirectionsStatus.OK) {
-        setDirections(result);
-      } else {
-        console.error('Error fetching directions:', result);
-      }
-    });
-  };
-
-  return (
-    <LoadScript googleMapsApiKey="YOUR_GOOGLE_MAPS_API_KEY">
-      <GoogleMap
-        mapContainerStyle={mapContainerStyle}
-        center={defaultCenter}
-        zoom={7}
-      >
-        {stops.map((stop, index) => (
-          <Marker key={index} position={{ lat: stop.lat, lng: stop.lng }} />
-        ))}
-        {directions && <DirectionsRenderer directions={directions} />}
-      </GoogleMap>
-    </LoadScript>
-  );
+  return <div id="map" style={{ height: '400px', width: '100%' }}></div>;
 };
+
+export default MapWithDirections;
+
+function stopToLatLngArray(stop: any): L.LatLngExpression {
+  return [
+    stop.coordinates.latitude,
+    stop.coordinates.longitude
+  ];
+}
+

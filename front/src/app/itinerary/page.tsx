@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import StopsTable from './StopsTable';
+import MapWithDirections from './MapWithDirections'
 
 export default function ItineraryPage() {
   const searchParams = useSearchParams();
@@ -30,7 +31,10 @@ export default function ItineraryPage() {
       <p className="text-2xl font-bold">Itinerary for {destination}</p>
 
       {stops.length > 0 ? (
-        <StopsTable stops={stops} />
+        <div>
+          <StopsTable stops={stops} />
+          <MapWithDirections stops={stops} />
+        </div>
       ) : (
         <p>No itinerary available for this destination</p>
       )}
