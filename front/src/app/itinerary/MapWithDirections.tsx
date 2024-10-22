@@ -15,8 +15,8 @@ const MapWithDirections = ({ stops }) => {
       attribution: '&copy; OpenStreetMap contributors',
     }).addTo(map);
 
-    const markers = stops.map((stop) => {
-      L.marker(stopToLatLngArray(stop)).addTo(map).bindPopup(stop.place);
+    const markers = stops.map((stop, i) => {
+      L.marker(stopToLatLngArray(stop)).addTo(map).bindPopup(`(${i+1}) ${stop.place}`);
     });
 
     // Draw route between the stops (if there are at least 2 stops)
