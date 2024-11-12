@@ -13,23 +13,22 @@ class GeoCoordinates(BaseModel):
     latitude: float = Field()
     longitude: float = Field()
 
-class Stop(BaseModel):
+class Day(BaseModel):
     """A stop during a roadtrip"""
 
-    place: str = Field(description="Name of a city, town etc")
-    description: str = Field(description="Short rationale of main activites or interests during this stop")
-    coordinates: GeoCoordinates = Field(description="Geo coordinates (latitude, longitude) of the place")
+    destination: str = Field(description="Name of a cities, town etc to visit during this day")
+    activities: str = Field(description="Description of main activites or interests during this stop")
+    coordinates: GeoCoordinates = Field(description="Geo coordinates (latitude, longitude) of the destination")
 
 class Itinerary(BaseModel):
-    stops: list[Stop] = Field()
+    stops: list[Day] = Field()
 
 def make_chain():
     model = ChatOpenAI()
     structured_model = model.with_structured_output(Itinerary)
     prompt_template = ChatPromptTemplate.from_messages([
         ("system", """Schlage eine Route für eine Wohnmobiltour vor. 
-        Entferne die Anreise; der Startpunkt ist der erste Halt in der Zielregion. 
-        Schlage für jeden Tag einen Ort zum Stationieren vor, sowie interessante Aktivitäten am Ort.  
+        Schlage für jeden Tag einen Ort zum Stationieren vor, sowie interessante Aktivitäten am Ort oder entlang der Route.  
         """),
         ("user",
          """Das Ziel ist: {destination}. 

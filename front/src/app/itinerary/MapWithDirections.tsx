@@ -16,7 +16,7 @@ const MapWithDirections = ({ stops }) => {
     }).addTo(map);
 
     const markers = stops.map((stop, i) => {
-      L.marker(stopToLatLngArray(stop)).addTo(map).bindPopup(`(${i+1}) ${stop.place}`);
+      L.marker(stopToLatLngArray(stop)).addTo(map).bindPopup(`(${i+1}) ${stop.destination}`);
     });
 
     // Draw route between the stops (if there are at least 2 stops)

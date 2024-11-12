@@ -7,8 +7,8 @@ interface ItineraryResponse {
   stops: Stop[]
 }
 interface Stop {
-  place: string,
-  description: string
+  destination: string,
+  activities: string
 }
 
 export async function GET(request: Request) {
@@ -21,6 +21,8 @@ export async function GET(request: Request) {
     traveller_info
   }) as ItineraryResponse;
 
+  console.log('ItineraryResponse', JSON.stringify(result, null, 4));
+
   // const stopsGeocoded = await geocodeBatch(result.stops.map((s) => s.place));
   // const stops = result.stops.map((stopFromChain, i) => {
   //   return { ...stopFromChain, geoProperties: stopsGeocoded[i] };
@@ -31,8 +33,6 @@ export async function GET(request: Request) {
     destination,
     stops
   };
-
-  console.log('itinerary', JSON.stringify(itinerary, null, 4));
 
   return new Response(JSON.stringify(itinerary), {
     status: 200,
