@@ -9,6 +9,7 @@ def test_generate_roadtrip_stations():
 
     assert len(stations) > 0
     for station in stations:
-        assert len(station.place) > 0
-        assert len(station.description) > 0
+        assert len(station.destination) > 0
+        assert len(station.activities) > 0
+        assert len(station.parking_options) > 0
 
