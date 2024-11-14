@@ -1,10 +1,19 @@
 #!/usr/bin/env python
+from fastapi import APIRouter
 from fastapi import FastAPI
-from langserve import add_routes
 
-from langchain_helper import make_chain
+from langchain_helper import generate_itinerary
+from model import Itinerary
 
-chain = make_chain()
+router = APIRouter()
+
+
+@router.post("/itinerary")
+async def generate_itinerary_endpoint(itinerary_request: dict) -> Itinerary:
+    destination = itinerary_request['destination']
+    traveller_info = itinerary_request['traveller_info']
+    return generate_itinerary(destination, traveller_info)
+
 
 app = FastAPI(
   title="LangChain Server",
@@ -12,11 +21,7 @@ app = FastAPI(
   description="A simple API server using LangChain's Runnable interfaces",
 )
 
-add_routes(
-    app,
-    chain,
-    path="/chain",
-)
+app.include_router(router)
 
 if __name__ == "__main__":
     import uvicorn
