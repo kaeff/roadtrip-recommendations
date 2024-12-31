@@ -1,0 +1,26 @@
+services:
+  chain:
+    build:
+      context: ./back
+      dockerfile: Dockerfile
+    working_dir: /app
+    command: python serve.py
+    volumes:
+      - ./back:/app
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./back/.env
+
+  web:
+    build:
+      context: ./front
+      dockerfile: Dockerfile
+    working_dir: /app
+    command: npm run dev
+    volumes:
+      - ./front:/app
+    ports:
+      - "3000:3000"
+    environment:
+      - CHAIN_BASE_URL=http://chain:8000

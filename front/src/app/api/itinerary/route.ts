@@ -1,3 +1,5 @@
+import { CHAIN_BASE_URL } from '../../config';
+
 interface ItineraryResponse {
   stops: Stop[];
 }
@@ -12,8 +14,7 @@ export async function GET(request: Request) {
   const traveller_info = "Mid 30s couple travelling in a camper van.";
 
   try {
-    // Replace RemoteRunnable with a direct POST request
-    const response = await fetch('http://localhost:8000/itinerary', {
+    const response = await fetch(`${CHAIN_BASE_URL}/itinerary`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -25,7 +26,6 @@ export async function GET(request: Request) {
       throw new Error(`Server error: ${response.statusText}`);
     }
 
-    // Parse response as ItineraryResponse
     const result: ItineraryResponse = await response.json();
 
     console.log('ItineraryResponse', JSON.stringify(result, null, 4));
